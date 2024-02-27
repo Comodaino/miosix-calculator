@@ -14,6 +14,16 @@ include $(CONFPATH)/config/Makefile.inc
 SUBDIRS := $(KPATH)
 
 ##
+## Bison and Lex 
+##
+
+LEX_SRC = parser.l
+YACC_SRC = parser.y
+C_SRC = lex.yy.c $(patsubst %.y, %.tab.c, $(YACC_SRC))
+EXEC_NAME = parser
+
+
+##
 ## List here your source files (both .s, .c and .cpp)
 ##
 SRC :=                                  \
@@ -60,9 +70,22 @@ DFLAGS   := -MMD -MP
 STDLIBS  := -lmiosix -lstdc++ -lc -lm -lgcc -latomic
 LINK_LIBS := $(LIBS) -L$(KPATH) -Wl,--start-group $(STDLIBS) -Wl,--end-group
 
-all: all-recursive main
+all: parser_cicle all-recursive main 
 
-clean: clean-recursive clean-topdir
+clean: clean-recursive clean-topdir clean-parser
+
+parser_cicle: lex.yy.c parser.tab.h parser.tab.c 
+
+$(PARS_NAME): $(C_SRC)
+	cc -lm -Wall -Wextra -pedantic -o $@ $^
+
+%.tab.c: %.y
+	bison -d $<
+
+%.tab.h: %.tab.c
+
+lex.yy.c: $(LEX_SRC)
+	flex $<
 
 program:
 	$(PROGRAM_CMDLINE)
@@ -104,6 +127,9 @@ main.elf: $(OBJ) all-recursive
 %.o : %.cpp
 	$(ECHO) "[CXX ] $<"
 	$(Q)$(CXX) $(DFLAGS) $(CXXFLAGS) $< -o $@
+
+clean-parser:
+	rm -rf *.c *.o $(EXEC_NAME)
 
 #pull in dependecy info for existing .o files
 -include $(OBJ:.o=.d)

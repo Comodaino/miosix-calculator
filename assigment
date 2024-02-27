@@ -1,0 +1,8 @@
+Scientific Calculator with Miosix
+The goal of the project is to develop a scientific calculator. Requirements:
+Target STM32F4 chip (provided with a STM324-discovery board)
+Interface with a 20x2 LCD character display (provided)
+Input using the RS232 serial (no keypad for simplicity)
+The calculator engine should support arbitrary infix expressions (with parenthesis for example) and at least the following functions: sin, cos, tan, x^2, x^3, y^x, 10^x, e^x, square root, third root, arbitrary root, logarithm in base 10, natural logarithm, logarithm in base 2, factorial.
+More complicated and/or well made implementations of each game will result in better scores (to our discretion).
+
