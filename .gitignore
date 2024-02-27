@@ -6,6 +6,8 @@ main.elf
 main.bin
 main.hex
 main.map
+lex.yy.c 
+parser.tab.*
 *.o
 *.a
 *.d
