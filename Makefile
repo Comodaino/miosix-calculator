@@ -20,7 +20,7 @@ SUBDIRS := $(KPATH)
 LEX_SRC = parser.l
 YACC_SRC = parser.y
 C_SRC = lex.yy.c $(patsubst %.y, %.tab.c, $(YACC_SRC))
-EXEC_NAME = parser
+PARS_NAME = parser
 
 
 ##
@@ -70,17 +70,18 @@ DFLAGS   := -MMD -MP
 STDLIBS  := -lmiosix -lstdc++ -lc -lm -lgcc -latomic
 LINK_LIBS := $(LIBS) -L$(KPATH) -Wl,--start-group $(STDLIBS) -Wl,--end-group
 
-all: parser_cicle all-recursive main 
+all: parser_cicle all-recursive main
 
 clean: clean-recursive clean-topdir clean-parser
+
 
 parser_cicle: lex.yy.c parser.tab.h parser.tab.c 
 
 $(PARS_NAME): $(C_SRC)
-	cc -lm -Wall -Wextra -pedantic -o $@ $^
+	cc -Os -lm -Wall -Wextra -pedantic -o $@ $^
 
 %.tab.c: %.y
-	bison -d $<
+	bison -d  $<
 
 %.tab.h: %.tab.c
 

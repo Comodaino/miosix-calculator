@@ -5,7 +5,10 @@
 %option noyywrap
 
 %%
-
+[2][ ]*[+][ ]*[2]    { return EGG; }
+^"leave me high"$ { return ACTV; }
+^"quit"$      { return QUIT; }
+^"help"$      { return HELP; }
 "+"           { return PLUS; }
 "-"           { return MINUS; }
 "*"           { return MUL; }
@@ -15,6 +18,7 @@
 "tan"         { return TAN; }
 "^"           { return EXP; }
 "e"           { return EUL; }
+"pi"          { return PIG; }
 "log"         { return LOG; }
 "ln"          { return LN; }
 "lg"          { return LG; }
@@ -27,5 +31,5 @@
 "\n"          { return NEWLINE; }
 [-]{0,1}[0-9]+[.]{0,1}[0-9]* { yylval.value = atof(yytext);
                 return NUMBER; }
-
 [ \t\r]+
+<*>.          { return C_ERROR; } 

@@ -1,16 +1,17 @@
 %{
 
 #include <stdio.h>
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <string.h>
 #include <main.h>
+#include <stdbool.h>
 
-#define E 2.7182818284
-#define PI 3.1415926535
 #define OT 0.3333333333
 double fact(const double);
 int yylex(void);
 void yyerror(const char *);
+bool egg, close_parser;
 %}
 
 %union {
@@ -25,15 +26,16 @@ void yyerror(const char *);
 %token SIN COS TAN EUL
 %token EXP LOG LN LG 
 %token ROOT SQRT CBRT
-%token FACT
+%token FACT EGG PIG 
 %type <value> exp
 
 %left PLUS MINUS
-%left MUL DIV
+%left MUL DIV 
 %left TAN SIN COS
 %left EXP LOG LN LG 
 %left ROOT SQRT CBRT
-%left FACT
+%left FACT EGG ACTV 
+%left C_ERROR QUIT HELP
 
 %%
 
@@ -47,12 +49,66 @@ lines:
   lines line
   | %empty
   ;
+
+c_errors:
+  c_errors C_ERROR 
+  | exp c_errors 
+  | c_errors exp
+  | C_ERROR
+  ;
         
 line: 
   exp NEWLINE
   {
     if($1 != $1) yyerror("math");
-    else print_lcdd($1);
+    else {
+      print_lcdd($1);
+      printf("result: %lf\n",$1);
+    }
+  }
+  | ACTV NEWLINE
+  {
+    if(egg) egg = false;
+    else egg = true;
+    yyerror("egg");
+  }
+  | c_errors NEWLINE
+  {
+    yyerror(" ");
+    fflush(stdin);
+    return 0; 
+  }
+  | QUIT NEWLINE
+  {
+    close_parser = true;
+    return 0;
+  }
+  | HELP NEWLINE
+  {
+    printf("Welcome to a miosix calculator\n");
+    printf("To start just type anything you want to calcultae\n");
+    printf("The result will be shown on the LCD display\n\n");
+    printf("Avaiable operations are:\n");
+    printf("x + y\n");
+    printf("x - y\n");
+    printf("x * y\n");
+    printf("x / y\n");
+    printf("sin x\n");
+    printf("cos x\n");
+    printf("tan x\n");
+    printf("x^2\n");
+    printf("x^3\n");
+    printf("y^x      -- y at the power of x\n");
+    printf("10^x     -- 10 at the power of x\n");
+    printf("e^x      -- e at the power of x\n");
+    printf("sqrt x   -- square root of x\n");
+    printf("cbrt x   -- cube root of x\n");
+    printf("y root x -- y-th root of x\n");
+    printf("log(x)   -- logarithm base 10\n");
+    printf("ln(x)    -- logarithm base e\n");
+    printf("lg(x)    -- logarithm base 2\n");
+    printf("x!       -- factorial\n");
+    printf("\n\n");
   }
   | NEWLINE
   {
@@ -61,9 +117,23 @@ line:
 ;
 
 exp:
+
   NUMBER
   {
     $$ = $1;
+  }
+  | EGG
+  {
+    if(egg) $$ = 5;
+    else $$ = 4;
+  }
+  | PIG
+  {
+    $$ = M_PI;
+  }
+  | EUL
+  {
+    $$ = M_E;
   }
   | exp PLUS exp
   {
@@ -80,6 +150,8 @@ exp:
   | exp DIV exp
   {
     $$ = $1 / $3;
+    fflush(stdin);
+    fflush(stdout);
   }
   | LPAR exp RPAR
   {
@@ -100,10 +172,6 @@ exp:
   | exp EXP exp
   {
     $$ = pow($1, $3);
-  }
-  | EUL EXP exp
-  {
-    $$ = exp($3);
   }
   | SQRT exp
   {
@@ -130,9 +198,9 @@ exp:
   {
     $$ = log($2) / log(2);
   }
-  | FACT exp
+  | exp FACT
   {
-    $$ = fact($2);
+    $$ = fact($1);
   }
 ;
   
@@ -140,19 +208,36 @@ exp:
 %%
 
 double fact(const double z) {
-  return sqrt(2 * PI / z) * pow((1 / E) * (z + 1 / (12 * z - 1 / (10 * z))), z);
+  if(ceil(z) != floor(z)) return tgamma(z+1);
+  double tmp = z, acc = 1;
+  while(tmp!=1){
+    acc = acc*tmp;
+    tmp--;
+  }
+  return acc;
 }
 
 void yyerror(const char *msg)
 {
-  if(!strcmp(msg, "math")) print_lcds("Math Error");
-  else print_lcds("Syntax Error");
+  if(!strcmp(msg, "math")){
+    print_lcds("Math Error\n");
+    printf("Math Error\n");
+  }else if(!strcmp(msg, "egg")) printf("don't leave me dry\n");
+  else {
+    print_lcds("Syntax Error\n");
+    printf("Syntax Error\n");
+  }
 }
-
 /*
-int main(int argc, char *argv[])
+int main()
 {
-  main_fun();
+  egg = false;
+  close = false;
+  while(!close){
+    yyparse();
+    fflush(stdin);
+    fflush(stdout);
+  }
   return 0;
 }
 */

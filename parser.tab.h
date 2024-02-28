@@ -73,7 +73,13 @@ extern int yydebug;
     ROOT = 274,                    /* ROOT  */
     SQRT = 275,                    /* SQRT  */
     CBRT = 276,                    /* CBRT  */
-    FACT = 277                     /* FACT  */
+    FACT = 277,                    /* FACT  */
+    EGG = 278,                     /* EGG  */
+    PIG = 279,                     /* PIG  */
+    ACTV = 280,                    /* ACTV  */
+    C_ERROR = 281,                 /* C_ERROR  */
+    QUIT = 282,                    /* QUIT  */
+    HELP = 283                     /* HELP  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -82,11 +88,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 16 "parser.y"
+#line 17 "parser.y"
 
   double value;
 
-#line 90 "parser.tab.h"
+#line 96 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
