@@ -52,8 +52,7 @@ lines:
 
 c_errors:
   c_errors C_ERROR 
-  | exp c_errors 
-  | c_errors exp
+  | exp c_errors
   | C_ERROR
   ;
         
@@ -72,10 +71,9 @@ line:
     else egg = true;
     yyerror("egg");
   }
-  | c_errors NEWLINE
+  | error NEWLINE
   {
     yyerror(" ");
-    fflush(stdin);
     return 0; 
   }
   | QUIT NEWLINE
@@ -150,8 +148,6 @@ exp:
   | exp DIV exp
   {
     $$ = $1 / $3;
-    fflush(stdin);
-    fflush(stdout);
   }
   | LPAR exp RPAR
   {
@@ -219,14 +215,14 @@ double fact(const double z) {
 
 void yyerror(const char *msg)
 {
+  yyclearin;
   if(!strcmp(msg, "math")){
-    print_lcds("Math Error\n");
+    print_lcds("Math Error");
     printf("Math Error\n");
-  }else if(!strcmp(msg, "egg")) printf("don't leave me dry\n");
-  else {
-    print_lcds("Syntax Error\n");
+  }else if(!strcmp(msg, "syntax")){
+    print_lcds("Syntax Error");
     printf("Syntax Error\n");
-  }
+  }else if(!strcmp(msg, "egg")) printf("don't leave me dry\n");
 }
 /*
 int main()

@@ -23,10 +23,11 @@ typedef Gpio<GPIOA_BASE,3> txd;
 Lcd44780 display(rs::getPin(),e::getPin(),d4::getPin(),
                   d5::getPin(),d6::getPin(),d7::getPin(),2,16);
 
-int lcd_buffer[BUFF_F];
+int lcd_buffer[BUFF_L];
 int i;
 
 void print_lcdd(const double x){
+  /*
   for(i = 0; i < BUFF_L; i++){
     lcd_buffer[i] = 0;
   }
@@ -42,13 +43,15 @@ void print_lcdd(const double x){
     }
     lcd_buffer[0] = r;
   }
+  */
   display.clear();
   display.go(0,0);
+  /*
   for(i = BUFF_L; i>= 0; i++){
     display.printf("%d",lcd_buffer[i]);
     display.go(i,0);
-  }
-  display.go(0,1);
+  }*/
+  //display.go(0,1);
   display.printf("%lf", x);
 }
 
