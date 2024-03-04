@@ -74,16 +74,15 @@ all: parser_cicle all-recursive main
 
 clean: clean-recursive clean-topdir clean-parser
 
-
-parser_cicle: lex.yy.c parser.tab.h parser.tab.c 
+parser_cicle: lex.yy.c parser.tab.c parser.tab.h 
 
 $(PARS_NAME): $(C_SRC)
 	cc -Os -lm -Wall -Wextra -pedantic -o $@ $^
 
-%.tab.c: %.y
+parser.tab.c: parser.y
 	bison -d  $<
 
-%.tab.h: %.tab.c
+parser.tab.h: parser.tab.c
 
 lex.yy.c: $(LEX_SRC)
 	flex $<
@@ -130,7 +129,7 @@ main.elf: $(OBJ) all-recursive
 	$(Q)$(CXX) $(DFLAGS) $(CXXFLAGS) $< -o $@
 
 clean-parser:
-	rm -rf *.c *.o $(EXEC_NAME)
+	rm -rf *.c *.o *.tab.c *.tab.h  $(PARS_NAME)
 
 #pull in dependecy info for existing .o files
 -include $(OBJ:.o=.d)

@@ -1,7 +1,9 @@
+#include <cmath>
 #include <cstdio>
 #include <miosix.h>
 #include <string>
 #include <iostream>
+#include <sys/types.h>
 #include <util/lcd44780.h>
 #include <parser.tab.c>
 #include <parser.tab.h>
@@ -10,7 +12,7 @@
 using namespace miosix;
 using namespace std;
 
-#define BUFF_L 20
+#define BUFF_L 16
 typedef Gpio<GPIOD_BASE,11> d4;
 typedef Gpio<GPIOD_BASE,12> d5;
 typedef Gpio<GPIOD_BASE,13> d6;
@@ -23,36 +25,70 @@ typedef Gpio<GPIOA_BASE,3> txd;
 Lcd44780 display(rs::getPin(),e::getPin(),d4::getPin(),
                   d5::getPin(),d6::getPin(),d7::getPin(),2,16);
 
-int lcd_buffer[BUFF_L];
+char lcd_buffer[BUFF_L];
 int i;
 
 void print_lcdd(const double x){
-  /*
-  for(i = 0; i < BUFF_L; i++){
-    lcd_buffer[i] = 0;
-  }
-  double tmp =0.0;
-  int r =0;
+  int buff = BUFF_L;
+  long long int tmpl = 0;
+  double tmpdouble = 0.0;
+  long long int tmp = 0;
+  int l = 0;
+  int ld = 0;
+  int index = 0;
 
-  tmp = x;
-  while(tmp > 1){
-    r = tmp % 10;
-    tmp = tmp / 10;
-    for(i=1; i<BUFF_L; i++){
-      lcd_buffer[i] = lcd_buffer[i-1];
-    }
-    lcd_buffer[0] = r;
+  if(x<0) {
+    buff = buff--;
+    tmp = -1*x;
+  }else tmp = x;
+
+  for(i = 0; i <= BUFF_L; i++){
+    lcd_buffer[i] = ' ';
   }
-  */
+  if(tmp != 0)  l = ceil( log10(tmp) );
+  else l = 1;
+
+  if(l < buff){
+    if(x<0) tmpdouble = -1*x - floor(-1*x);
+    else tmpdouble = x - floor(x);
+    if (tmpdouble > 0.0){
+      ld = buff - (l + 1);
+      if(ld > 0){
+        tmpdouble = tmpdouble * pow(10,ld);
+      }
+    }
+  }
+
+  tmpl = (long long int)tmpdouble;
+  for(i=0; i<ld && tmpl%10 == 0; i++){
+    tmpl = tmpl/10;
+  }
+  ld = ld - (i-1);
+  if(ceil(x) == floor(x)) ld =0;
+  printf("l: %d\nld: %d\ntmp: %d\ntmpl: %ld \ntmpdouble: %lf\n\n", l, ld, tmp, tmpl, tmpdouble);
+  for(i=0;i<ld;i++){
+    lcd_buffer[i] = (tmpl % 10) + '0';
+    tmpl = tmpl/10;
+    index = i;
+  }
+  if(ld != 0){
+	  lcd_buffer[index] = '.';
+  	index++;
+  }
+  for(i=index; i<BUFF_L;i++){
+    lcd_buffer[i] = (tmp % 10) + '0';
+    tmp = tmp/10;
+    index = i;
+  }
+  if(x<0) lcd_buffer[l + ld ] = '-';
   display.clear();
-  display.go(0,0);
-  /*
-  for(i = BUFF_L; i>= 0; i++){
-    display.printf("%d",lcd_buffer[i]);
+  for(i = 0; i<= buff; i++){
     display.go(i,0);
-  }*/
-  //display.go(0,1);
-  display.printf("%lf", x);
+    display.printf("%c",lcd_buffer[buff-i-1]);
+  }
+
+  //display.go(0,2);
+  //display.printf("%lf", x);
 }
 
 void print_lcds(const char * x){

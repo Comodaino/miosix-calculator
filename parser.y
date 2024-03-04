@@ -73,7 +73,7 @@ line:
   }
   | error NEWLINE
   {
-    yyerror(" ");
+    yyerror("syntax");
     return 0; 
   }
   | QUIT NEWLINE
@@ -217,12 +217,13 @@ void yyerror(const char *msg)
 {
   yyclearin;
   if(!strcmp(msg, "math")){
-    print_lcds("Math Error");
+    print_lcds("Math Error\n");
     printf("Math Error\n");
-  }else if(!strcmp(msg, "syntax")){
-    print_lcds("Syntax Error");
-    printf("Syntax Error\n");
   }else if(!strcmp(msg, "egg")) printf("don't leave me dry\n");
+  else if(!strcmp(msg, "syntax")){
+    print_lcds("Syntax Error\n");
+    printf("Syntax Error\n");
+  }
 }
 /*
 int main()
