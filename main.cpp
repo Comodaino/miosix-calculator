@@ -1,7 +1,7 @@
 #include <cmath>
 #include <cstdio>
 #include <miosix.h>
-#include <string>
+#include <string.h>
 #include <iostream>
 #include <sys/types.h>
 #include <util/lcd44780.h>
@@ -25,10 +25,11 @@ typedef Gpio<GPIOA_BASE,3> txd;
 Lcd44780 display(rs::getPin(),e::getPin(),d4::getPin(),
                   d5::getPin(),d6::getPin(),d7::getPin(),2,16);
 
-char lcd_buffer[BUFF_L];
+char lcd_buffer[BUFF_L], lcd_inv[BUFF_L];
 int i;
 
-void print_lcdd(const double x){
+
+void print_smalld(const double x){
   int buff = BUFF_L;
   long long int tmpl = 0;
   double tmpdouble = 0.0;
@@ -80,12 +81,34 @@ void print_lcdd(const double x){
     tmp = tmp/10;
     index = i;
   }
-  if(x<0) lcd_buffer[l + ld ] = '-';
-  display.clear();
-  for(i = 0; i<= buff; i++){
-    display.go(i,0);
-    display.printf("%c",lcd_buffer[buff-i-1]);
+  
+  for(i=0; i<ld+l; i++){
+    lcd_inv[i]=lcd_buffer[ld+l -i -1];
   }
+
+  printf("------\n");
+  for(int i=0; i<l+ld; i++){
+    printf("%c",lcd_buffer[i]);
+  }
+  printf("\n");
+  for(int i=0; i<=l+ld; i++){
+    printf("%c",lcd_inv[i]);
+  }
+  printf("\n----\n");
+
+  display.clear();
+  for(i = 0; i<=l+ld; i++){
+    display.go(BUFF_L + i - (l+ld),0);
+    display.printf("%c",lcd_inv[i]);
+  }
+  if(x<0){
+    display.go(BUFF_L - (l+ld+1), 0);
+    printf("negative");
+    display.printf("%c", '-');
+  }
+  //display.clear();
+  //display.go(0,0);
+  //display.printf("%s", strrev(lcd_buffer));
 
   //display.go(0,2);
   //display.printf("%lf", x);
@@ -97,13 +120,17 @@ void print_lcds(const char * x){
   display.printf("%s", x);
 }
 
+void print_lcdd(const double x){
+  print_smalld(x);
+}
+
 int main()
 {
   close_parser = false;
   egg = false;
   display.clear();
   display.go(0,0);
-  display.printf("Nyaaa :3");
+  display.printf("Scemo chi legge");
   while(!close_parser){
     yyparse();
     fflush(stdin);
