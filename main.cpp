@@ -28,6 +28,59 @@ Lcd44780 display(rs::getPin(),e::getPin(),d4::getPin(),
 char lcd_buffer[BUFF_L], lcd_inv[BUFF_L];
 int i;
 
+void print_bigd(const double x){
+  int l=1,ld=15, buff = BUFF_L, exp = 0;
+  long long int tmpl = 0, tmpd = 0;
+  double tmpdouble = 0.0;
+  tmpdouble = x;
+  if(x<0) {
+    buff--;
+    tmpdouble *= -1;
+  }
+
+  for(i=0; tmpdouble > 10; i++){
+    tmpdouble = tmpdouble/10;
+  }
+  exp = i;
+  tmpl = floor(tmpdouble);
+  tmpdouble = tmpdouble - tmpl;
+
+  for(i = 0; i<18; i++){
+    tmpdouble *= 10;
+  }
+  tmpd = tmpdouble;
+  printf("gay: %lld", tmpd);
+  display.clear();
+  if(x<0){
+    display.go(0,0);
+    display.printf("-");
+    display.go(1,0);
+    display.printf("%d", tmpl);
+    display.go(2,0);
+    display.printf(".");
+    display.go(3,0);
+    display.printf("%lld",tmpd);
+  }else{
+    display.go(0,0);
+    display.printf("%d", tmpl);
+    display.go(1,0);
+    display.printf(".");
+    display.go(2,0);
+    display.printf("%lld",tmpd);
+  }
+  display.go(0,1);
+  display.printf("%s","*10^");
+  display.go(4,1);
+  display.printf("%d", exp);
+
+
+  printf("----\n");
+  printf("tmpl: %lld\n", tmpl);
+  printf("tmpdouble: %lld\n", tmpdouble * (10^18));
+  printf("exp: %d\n", exp);
+  printf("----\n");
+  
+}
 
 void print_smalld(const double x){
   int buff = BUFF_L;
@@ -39,7 +92,7 @@ void print_smalld(const double x){
   int index = 0;
 
   if(x<0) {
-    buff = buff--;
+    buff--;
     tmp = -1*x;
   }else tmp = x;
 
@@ -66,7 +119,6 @@ void print_smalld(const double x){
   }
   ld = ld - (i-1);
   if(ceil(x) == floor(x)) ld =0;
-  printf("l: %d\nld: %d\ntmp: %d\ntmpl: %ld \ntmpdouble: %lf\n\n", l, ld, tmp, tmpl, tmpdouble);
   for(i=0;i<ld;i++){
     lcd_buffer[i] = (tmpl % 10) + '0';
     tmpl = tmpl/10;
@@ -86,16 +138,6 @@ void print_smalld(const double x){
     lcd_inv[i]=lcd_buffer[ld+l -i -1];
   }
 
-  printf("------\n");
-  for(int i=0; i<l+ld; i++){
-    printf("%c",lcd_buffer[i]);
-  }
-  printf("\n");
-  for(int i=0; i<=l+ld; i++){
-    printf("%c",lcd_inv[i]);
-  }
-  printf("\n----\n");
-
   display.clear();
   for(i = 0; i<=l+ld; i++){
     display.go(BUFF_L + i - (l+ld),0);
@@ -103,15 +145,8 @@ void print_smalld(const double x){
   }
   if(x<0){
     display.go(BUFF_L - (l+ld+1), 0);
-    printf("negative");
     display.printf("%c", '-');
   }
-  //display.clear();
-  //display.go(0,0);
-  //display.printf("%s", strrev(lcd_buffer));
-
-  //display.go(0,2);
-  //display.printf("%lf", x);
 }
 
 void print_lcds(const char * x){
@@ -121,7 +156,8 @@ void print_lcds(const char * x){
 }
 
 void print_lcdd(const double x){
-  print_smalld(x);
+  if(x>9999999999999999 || x< -999999999999999) print_bigd(x);
+  else print_smalld(x);
 }
 
 int main()
