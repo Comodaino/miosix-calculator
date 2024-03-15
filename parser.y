@@ -217,11 +217,11 @@ void yyerror(const char *msg)
 {
   yyclearin;
   if(!strcmp(msg, "math")){
-    print_lcds("Math Error\n");
+    print_lcds("Math Error");
     printf("Math Error\n");
   }else if(!strcmp(msg, "egg")) printf("don't leave me dry\n");
   else if(!strcmp(msg, "syntax")){
-    print_lcds("Syntax Error\n");
+    print_lcds("Syntax Error");
     printf("Syntax Error\n");
   }
 }

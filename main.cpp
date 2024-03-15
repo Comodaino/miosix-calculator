@@ -1,6 +1,6 @@
 #include <cmath>
 #include <cstdio>
-#include <miosix.h>
+#include "miosix.h"
 #include <string.h>
 #include <iostream>
 #include <sys/types.h>
@@ -29,7 +29,7 @@ char lcd_buffer[BUFF_L], lcd_inv[BUFF_L];
 int i;
 
 void print_bigd(const double x){
-  int l=1,ld=15, buff = BUFF_L, exp = 0;
+  int buff = BUFF_L, exp = 0;
   long long int tmpl = 0, tmpd = 0;
   double tmpdouble = 0.0;
   tmpdouble = x;
@@ -49,7 +49,6 @@ void print_bigd(const double x){
     tmpdouble *= 10;
   }
   tmpd = tmpdouble;
-  printf("gay: %lld", tmpd);
   display.clear();
   if(x<0){
     display.go(0,0);
@@ -72,14 +71,6 @@ void print_bigd(const double x){
   display.printf("%s","*10^");
   display.go(4,1);
   display.printf("%d", exp);
-
-
-  printf("----\n");
-  printf("tmpl: %lld\n", tmpl);
-  printf("tmpdouble: %lld\n", tmpdouble * (10^18));
-  printf("exp: %d\n", exp);
-  printf("----\n");
-  
 }
 
 void print_smalld(const double x){
@@ -150,8 +141,10 @@ void print_smalld(const double x){
 }
 
 void print_lcds(const char * x){
+  int l =0;
+  l = strlen(x);
   display.clear();
-  display.go(0,0);
+  display.go(BUFF_L - l,0);
   display.printf("%s", x);
 }
 
@@ -166,7 +159,7 @@ int main()
   egg = false;
   display.clear();
   display.go(0,0);
-  display.printf("Scemo chi legge");
+  display.printf("Miosix calculator");
   while(!close_parser){
     yyparse();
     fflush(stdin);
