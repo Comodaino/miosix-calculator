@@ -159,7 +159,9 @@ int main()
   egg = false;
   display.clear();
   display.go(0,0);
-  display.printf("Miosix calculator");
+  display.printf("Miosix");
+  display.go(6,1);
+  display.printf("Calculator");
   while(!close_parser){
     yyparse();
     fflush(stdin);
