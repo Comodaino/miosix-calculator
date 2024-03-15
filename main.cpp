@@ -90,7 +90,7 @@ void print_smalld(const double x){
   for(i = 0; i <= BUFF_L; i++){
     lcd_buffer[i] = ' ';
   }
-  if(tmp != 0)  l = ceil( log10(tmp) );
+  if(tmp != 0)  l = floor( log10(tmp) ) + 1;
   else l = 1;
 
   if(l < buff){
