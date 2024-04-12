@@ -8,6 +8,7 @@
 #include <stdbool.h>
 
 #define OT 0.3333333333
+const double upp_limit = pow(10,100);
 double fact(const double);
 int yylex(void);
 void yyerror(const char *);
@@ -59,7 +60,7 @@ c_errors:
 line: 
   exp NEWLINE
   {
-    if($1 != $1) yyerror("math");
+    if($1 != $1 || $1 > upp_limit) yyerror("math");
     else {
       print_lcdd($1);
       printf("result: %lf\n",$1);

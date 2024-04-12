@@ -162,6 +162,7 @@ int main()
   display.printf("Miosix");
   display.go(6,1);
   display.printf("Calculator");
+  printf("\n\nWelcome to miosix calculator\nType \"help\" to get a cheat sheet\n\n");
   while(!close_parser){
     yyparse();
     fflush(stdin);

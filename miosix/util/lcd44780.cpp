@@ -87,6 +87,7 @@ void Lcd44780::setCgram(int charCode, const unsigned char font[8])
 
 void Lcd44780::init()
 {
+    comd(0x33);
     rs.low();
     half(0x20);
     rs.high();
