@@ -85,7 +85,7 @@ line:
   | HELP NEWLINE
   {
     printf("Welcome to a miosix calculator\n");
-    printf("To start just type anything you want to calcultae\n");
+    printf("To start just type anything you want to calculate\n");
     printf("The result will be shown on the LCD display\n\n");
     printf("Avaiable operations are:\n");
     printf("x + y\n");
@@ -103,9 +103,9 @@ line:
     printf("sqrt x   -- square root of x\n");
     printf("cbrt x   -- cube root of x\n");
     printf("y root x -- y-th root of x\n");
-    printf("log(x)   -- logarithm base 10\n");
-    printf("ln(x)    -- logarithm base e\n");
-    printf("lg(x)    -- logarithm base 2\n");
+    printf("log x   -- logarithm base 10\n");
+    printf("ln x    -- logarithm base e\n");
+    printf("lg x    -- logarithm base 2\n");
     printf("x!       -- factorial\n");
     printf("\n\n");
   }
