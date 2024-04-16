@@ -4,11 +4,13 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <string.h>
+#include <float.h>
 #include <main.h>
 #include <stdbool.h>
 
 #define OT 0.3333333333
-const double upp_limit = pow(10,100);
+//const double upp_limit = pow(10,100) - 1.0f;
+const double upp_limit = DBL_MAX;
 double fact(const double);
 int yylex(void);
 void yyerror(const char *);
